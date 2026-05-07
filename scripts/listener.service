@@ -1,0 +1,64 @@
+# /etc/systemd/system/<agentname>-listener.service (v1.1.0)
+# CUSTOMIZE: <agentname>, WorkingDirectory, ExecStart, SyslogIdentifier
+
+[Unit]
+Description=<AgentName> WhatsApp Listener
+After=network-online.target openclaw.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+
+# --- User identity ---
+# Default keeps backward compat with v1.0.0 deployments (User=root).
+# RECOMMENDED for v1.1.0+: create a dedicated service user.
+#
+#   sudo useradd --system --no-create-home --shell /usr/sbin/nologin openclaw-wa
+#   sudo chown -R openclaw-wa:openclaw-wa /root/<agentname>     # or move to /opt/<agentname>
+#   # then change "User=root" → "User=openclaw-wa" below
+#
+# If you migrate, also point AUTH_DATA_PATH (in listener.js) and queue dir to a
+# location the new user can write to (e.g. /var/lib/<agentname>/).
+User=root
+
+WorkingDirectory=/root/<agentname>/whatsapp
+ExecStart=/usr/bin/node /root/<agentname>/whatsapp/listener.js
+
+# CRITICAL: makes API key + LLM_* + channel security flags available to Node
+# (ALLOW_GROUPS, ALLOWED_CONTACTS, READ_ONLY all live here)
+EnvironmentFile=-/run/openclaw-env
+
+# --- Memory protection (Chrome/Puppeteer leaks) ---
+# Without these, Chrome can consume 10+ GB and crash the server
+MemoryMax=2G
+MemoryHigh=1800M
+MemorySwapMax=0
+OOMPolicy=stop
+OOMScoreAdjust=500
+RuntimeMaxSec=43200    # preventive restart every 12h; session persists on disk
+
+# --- systemd hardening (v1.1.0+) ---
+# Kept compatible with User=root. If you migrate to a dedicated user,
+# you can additionally enable ProtectHome=true and DynamicUser=yes.
+NoNewPrivileges=true
+ProtectSystem=full
+PrivateTmp=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+
+# --- Restart policy ---
+Restart=always
+RestartSec=10
+StartLimitIntervalSec=120
+StartLimitBurst=5
+
+# --- Logging ---
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=<agentname>-listener
+
+[Install]
+WantedBy=multi-user.target

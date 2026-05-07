@@ -1,0 +1,44 @@
+# Runtime queue files (gerados em produção, não fazem parte da skill)
+queue/
+inbound.json
+outbound.json
+processed.json
+processed-message-ids.json
+
+# Sessão WhatsApp (LocalAuth) — nunca commitar credenciais de sessão
+.wwebjs_auth/
+session-*/
+whatsapp-auth-*/
+
+# Variáveis de ambiente
+.env
+.env.local
+/run/openclaw-env
+
+# Node
+node_modules/
+package-lock.json
+npm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Editor / SO
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*~
+
+# Logs
+*.log
+journalctl-*.txt
+
+# Build artifacts
+*.skill
+build/
+dist/

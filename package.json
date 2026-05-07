@@ -1,0 +1,16 @@
+{
+  "name": "whatsapp-agent-setup",
+  "version": "1.2.0",
+  "description": "WhatsApp listener for OpenClaw agents (Puppeteer-based)",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "start": "node listener.js"
+  },
+  "dependencies": {
+    "whatsapp-web.js": "1.23.0",
+    "qrcode-terminal": "0.12.0"
+  }
+}

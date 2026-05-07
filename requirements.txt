@@ -1,0 +1,3 @@
+# Pinned for v1.2.0. Last verified 2026-05-06 against the reference production deployment.
+# Bump deliberately — verify api-handler.py compatibility before changing.
+openai==1.54.0
